@@ -6,6 +6,10 @@
 * Untrusted devices cannot add themselves to the network
 * Robustness to protect system in case one of the sensors is compromised (?)
 
+## Attacker Model
+* Possible physical access to some of the sensors/actuators?
+* Can compromise software on some of the sensors/actuators?
+
 ## System Description
 1. Contract maintains array of trusted IoT sensors and actuators
 2. Sensors log readings into the blockchain
