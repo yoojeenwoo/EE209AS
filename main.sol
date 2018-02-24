@@ -27,14 +27,16 @@ contract System {
     // Alert events emitted to light clients
     event tempAlert(address from, address to, string message, uint temp);
     event humidAlert(address from, address to, string message, uint humid);
+    event tempUpdate(address from, uint temp);
+    event humidUpdate(address from, uint temp);
     
+    // Functions to set up network and devices
     function System() public {                                  // Constructor
         owner = msg.sender;                                     // Caller of contract is owner
     }
     
     function addSensor(address _device, string _name, string _deviceType) public {
         require(msg.sender == owner);                           // Only owner can add sensors
-        
         sensors[_device].name = _name;
         sensors[_device].deviceType = _deviceType;
     }
@@ -45,14 +47,27 @@ contract System {
         actuators[_device].deviceType = _deviceType;
     }
     
-    function getTemp() public view returns(uint temp) {         // Getter function for temp
+    // Getter functions
+    function getTemp() public view returns(uint temp) {
         return temperature[temperature.length];
     }
     
-    function getHumid() public view returns(uint humid) {       // Getter function for humidity
+    function getHumid() public view returns(uint humid) {
         return humidity[humidity.length];
     }
     
+    // Setter Functions
+    function addTemp(uint temp) public payable{
+        temperature.push(temp);
+        tempUpdate(msg.sender, temp);
+    }
+    
+    function addHumid(uint humid) public {
+        humidity.push(humid);
+        humidUpdate(msg.sender, humid);
+    }
+    
+    // Implementation Functions
     function safetyCheck() public view {
         /**@dev Checks if temperature and humidity are within bounds */
         if (msg.sender != owner) { return; }                    // Safety check accessible only by owner
@@ -71,6 +86,11 @@ contract System {
         //     emit humidAlert(msg.sender, ..., "Humidity too high!", currentHumid);
         // }
     }
-
+    
+    // Clean-up Functions
+    function kill() public {
+        require(msg.sender == owner);
+        selfdestruct(owner);
+    }
 
 }
