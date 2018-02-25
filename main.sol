@@ -25,8 +25,8 @@ contract System {
     mapping(address => Actuator) public actuators;              // Map addresses to actuators
     
     // Alert events emitted to light clients
-    event tempAlert(address from, address to, string message, uint temp);
-    event humidAlert(address from, address to, string message, uint humid);
+    event tempAlert(address from, string message, uint temp);
+    event humidAlert(address from, string message, uint humid);
     event tempUpdate(address from, uint temp);
     event humidUpdate(address from, uint temp);
     
@@ -68,23 +68,23 @@ contract System {
     }
     
     // Implementation Functions
-    function safetyCheck() public view {
+    function safetyCheck() public {
         /**@dev Checks if temperature and humidity are within bounds */
         if (msg.sender != owner) { return; }                    // Safety check accessible only by owner
-        // uint currentTemp = temperature[temperature.length];
-        // uint currentHumid = humidity[humidity.length];
-        // if (currentTemp < MIN_TEMP) {
-        //     emit tempAlert(msg.sender, ..., "Temperature too low!", currentTemp);
-        // }
-        // else if (currentTemp > MAX_TEMP) {
-        //     emit tempAlert(msg.sender, ..., "Temperature too high!", currentTemp);
-        // }
-        // if (currentHumid < MIN_TEMP) {
-        //     emit humidAlert(msg.sender, ..., "Humidity too low!", currentHumid);
-        // }
-        // else if (currentHumid > MAX_HUM) {
-        //     emit humidAlert(msg.sender, ..., "Humidity too high!", currentHumid);
-        // }
+        uint currentTemp = temperature[temperature.length];
+        uint currentHumid = humidity[humidity.length];
+        if (currentTemp < MIN_TEMP) {
+            tempAlert(msg.sender, "Temperature too low!", currentTemp);
+        }
+        else if (currentTemp > MAX_TEMP) {
+            tempAlert(msg.sender, "Temperature too high!", currentTemp);
+        }
+        if (currentHumid < MIN_TEMP) {
+            humidAlert(msg.sender, "Humidity too low!", currentHumid);
+        }
+        else if (currentHumid > MAX_HUM) {
+            humidAlert(msg.sender, "Humidity too high!", currentHumid);
+        }
     }
     
     // Clean-up Functions
