@@ -7,6 +7,7 @@ contract System {
     uint constant MAX_HUM = 30;         // Maximum humidity threshold
     uint[] temperature;                 // Dynamic temperature array
     uint[] humidity;                    // Dynamic humidity array
+    address[] devices;                  // Dynamic device array
     
     address public owner;               // Address of contract owner
     
@@ -30,7 +31,7 @@ contract System {
     event tempUpdate(address from, uint temp);
     event humidUpdate(address from, uint temp);
     
-    // Functions to set up network and devices
+    // Functions to set up network and devices0x9Ea39C22b612e2909f7FeB8782991A97b3A80784
     function System() public {                                  // Constructor
         owner = msg.sender;                                     // Caller of contract is owner
     }
@@ -39,25 +40,27 @@ contract System {
         require(msg.sender == owner);                           // Only owner can add sensors
         sensors[_device].name = _name;
         sensors[_device].deviceType = _deviceType;
+        devices.push(_device);
     }
     
     function addActuator(address _device, string _name, string _deviceType) public {
         require(msg.sender == owner);                           // Only owner can add sensors
         actuators[_device].name = _name;
         actuators[_device].deviceType = _deviceType;
+        devices.push(_device);
     }
     
     // Getter functions
     function getTemp() public view returns(uint temp) {
-        return temperature[temperature.length];
+        return temperature[temperature.length - 1];
     }
     
     function getHumid() public view returns(uint humid) {
-        return humidity[humidity.length];
+        return humidity[humidity.length - 1];
     }
     
     // Setter Functions
-    function addTemp(uint temp) public payable{
+    function addTemp(uint temp) public {
         temperature.push(temp);
         tempUpdate(msg.sender, temp);
     }
@@ -71,8 +74,8 @@ contract System {
     function safetyCheck() public {
         /**@dev Checks if temperature and humidity are within bounds */
         if (msg.sender != owner) { return; }                    // Safety check accessible only by owner
-        uint currentTemp = temperature[temperature.length];
-        uint currentHumid = humidity[humidity.length];
+        uint currentTemp = temperature[temperature.length - 1];
+        uint currentHumid = humidity[humidity.length - 1];
         if (currentTemp < MIN_TEMP) {
             tempAlert(msg.sender, "Temperature too low!", currentTemp);
         }
