@@ -18,25 +18,23 @@ var cronJob = cron.schedule("* * * * * *", function(){
 
 // CONTRACT TESTING
 /*
-A script that returns some filtered events from an Ethereum smart contract.
-Your contract will require a solidity event and it will need to be triggered at least once before you run the script.
-For an explanation of this code, navigate to the wiki https://github.com/ThatOtherZach/Web3-by-Example/wiki/Getting-Smart-Contract-Events
 */
 
 // Add the web3 node module
 var Web3 = require('web3');
 
 // transaction dependencies
-var CryptoJS = require('crypto-js')  
+var CryptoJS = require('crypto-js') 
+var EthJS = require('ethereumjs-tx') 
 
-myPrivateKey = "xxxxxxxxxxxxxxxxxxxx"
+myPrivateKey = "ef665166f1e3b70c739d3c2c77a0da2ced13ad22009aa4d4b0cc3e84ac7e6c1a"
 account = "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068"
 var privateKey = new Buffer(myPrivateKey, 'hex')
 
 // Show web3 where it needs to look for the Ethereum node.
 web3 = new Web3(new Web3.providers.HttpProvider('https://ropsten.infura.io/SdO4U3ydQdgK3D3eNE2Y'));
 
-// The address we want to search by.
+// The address of the contract
 var addr = "0xdd1327ece57c49f9abafcc5ac478676ae1ca0762";
 
 // Show the Hash in the console.
@@ -320,23 +318,39 @@ web3.eth.defaultAccount = "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068";
 
 
 
-
 var functionName = 'addTemp'  
 var types = ['uint']  
-var args = [0]  
+var args = [0]
 var fullName = functionName + '(' + types.join() + ')'  
 var signature = CryptoJS.SHA3(fullName,{outputLength:256}).toString(CryptoJS.enc.Hex).slice(0, 8)  
 var dataHex = signature + web3.eth.abi.encodeParameters(types, args)  
 var data = '0x'+dataHex  
+var nonce = parseInt(web3.utils.toHex(web3.eth.getTransactionCount(account)))%20 
+var gasPrice = web3.utils.toHex(web3.eth.getGasPrice())
+console.log(gasPrice)
+// web3.utils.toHex(web3.eth.gasLimit)
+// .then(console.log);
 
-var nonce = web3.utils.toHex(web3.eth.getTransactionCount(account))  
-var gasPrice = web3.utils.toHex(web3.eth.gasPrice)  
-var gasLimitHex = web3.utils.toHex(300000)
-var rawTx = { 'nonce': nonce, 'gasPrice': gasPrice, 'gasLimit': gasLimitHex, 'from': account, 'to': addr, 'data': data}  
-var tx = new Tx(rawTx)  
+var gasLimitHex = web3.utils.toHex(web3.eth.gasLimit)
+console.log(gasLimitHex)
+
+var rawTx = { 
+			'nonce': nonce, 
+			'gas': "53128",
+			// 'gasPrice': gasPrice, 
+			'gasLimit': '100000000', 
+			'from': account, 
+			'to': addr, 
+			'data': data}  
+var tx = new EthJS(rawTx)  
 tx.sign(privateKey)  
-var serializedTx = '0x'+tx.serialize().toString('hex')  
-web3.eth.sendRawTransaction(serializedTx, function(err, txHash){ console.log(err, txHash) })
+var serializedTx = '0x'+tx.serialize().toString('hex') 
+
+web3.eth.estimateGas({
+	data: web3.eth.abi.encodeParameters(types, args)
+}) 
+.then(console.log);
+web3.eth.sendSignedTransaction(serializedTx, function(err, txHash){ console.log(err, txHash) })
 
 //console.log(web3.eth.defaultAccount);
 
@@ -348,6 +362,14 @@ web3.eth.sendRawTransaction(serializedTx, function(err, txHash){ console.log(err
 
 // });
 
-//contract.methods.addTemp(0).send({from: "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068"});
+// Using methods.myMethod
+
+// contract.methods.addTemp(0).send({from: "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068"}, function(error, transactionHash) {
+	// console.log(transactionHash)
+// });
+// contract.methods.addTemp(0).send({from: "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068"})
+// .then(function(receipt) {
+	// console.log("hi")
+// });
 
 // END CONTRACT TESTING
