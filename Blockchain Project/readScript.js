@@ -322,7 +322,10 @@ function readTemp(){
     	//to: '0xdd1327ece57c49f9abafcc5ac478676ae1ca0762',
     	to: addr,
     	data: contract.methods.getTemp().encodeABI()
-	}).then(console.log)
+	}).then((response) => {
+		response = parseInt(response);
+        console.log(response);
+    })
 }
 
 
