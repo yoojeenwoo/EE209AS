@@ -306,6 +306,9 @@ console.log('-----------------------------------');
 // console.log(contract.options.jsonInterface);
 // contract.methods.getTemp().call();
 web3.eth.call({
-    to: '0xdd1327ece57c49f9abafcc5ac478676ae1ca0762',
+    //to: '0xdd1327ece57c49f9abafcc5ac478676ae1ca0762',
+    to: addr,
     data: contract.methods.getTemp().encodeABI()
 }).then(console.log)
+
+
