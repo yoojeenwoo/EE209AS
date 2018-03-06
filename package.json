@@ -1,0 +1,26 @@
+{
+  "name": "ee209as",
+  "version": "1.0.0",
+  "description": "blockchain iot project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yoojeenwoo/EE209AS.git"
+  },
+  "author": "Eugune Wu, Ahmed Refai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yoojeenwoo/EE209AS/issues"
+  },
+  "homepage": "https://github.com/yoojeenwoo/EE209AS#readme",
+  "dependencies": {
+    "coder": "0.0.0",
+    "crypto-js": "^3.1.9-1",
+    "ethereumjs-tx": "^1.3.3",
+    "node-cron": "^1.2.1",
+    "web3": "^1.0.0-beta.30"
+  }
+}
