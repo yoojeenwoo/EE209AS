@@ -323,6 +323,37 @@ updateState(){
 			 })
    }
 
+addSensor() {
+	let addr = this.refs['sensor-addr'].value
+	let type = this.refs['sensor-type'].value
+	if (type != 'Temperature') {
+		alert('Select a valid type')
+	} else {
+		this.state.ContractInstance.addSensor(addr, 'mySensor', type, {
+            gas: 300000,
+            from: web3.eth.accounts[0],
+         }, (err, result) => {
+            this.refs['sensor-addr'].value=''
+			this.refs['sensor-type'].value=''
+         })
+	}
+}
+addActuator() {
+	let addr = this.refs['actuator-addr'].value
+	let type = this.refs['actuator-type'].value
+	if (type != 'Display') {
+		alert('Select a valid type')
+	} else {
+		this.state.ContractInstance.addActuator(addr, 'myActuator', type, {
+            gas: 300000,
+            from: web3.eth.accounts[0],
+         }, (err, result) => {
+            this.refs['actuator-addr'].value=''
+			this.refs['actuator-type'].value=''
+         })
+	}
+}
+   
 render(){
 	return (
         <div className="main-container">
@@ -340,20 +371,42 @@ render(){
 				<b>Humidity:</b> &nbsp;
 				<span>{this.state.humid_current}</span>
 			</div>
-
+			
+			<div>
+			<table>
+				<tbody>
+					<tr><th>Device List</th></tr>
+					<tr>
+				</tbody>
+			</table>
+			</div>
 			<hr/>
 
 			<h2>Control Panel</h2>
-			
-			<b>Sensor</b>
-			Address: <input className="bet-input" ref="ether-bet"/> &nbsp;
-			<select><option value="Temperature">Temperature</option></select>&nbsp;
-			<button><b> Add</b></button>
-			<br/>
-			<b>Actuator</b>
-			Address: <input className="bet-input" ref="ether-bet"/> &nbsp;
-			<select><option value="Display">Display</option></select>&nbsp;
-			<button><b> Add</b></button>
+			<table>
+			<tbody>
+			<tr>
+				<th><b>Sensor</b></th>
+				<td>Address:</td>
+				<td><input className="sensor_addr" ref="sensor-addr" placeholder="0x"/></td>
+				<td><select ref="sensor-type">
+					<option></option>
+					<option value="Temperature">Temperature</option>
+				</select></td>
+				<td><button onClick={() =>{this.addSensor()}}><b>Add</b></button></td>
+			</tr>
+			<tr>
+				<th><b>Actuator</b></th>
+				<td>Address:</td>
+				<td><input className="actuator_addr" ref="actuator-addr" placeholder="0x"/></td>
+				<td><select ref="actuator-type">
+					<option></option>
+					<option value="Display">Display</option>
+				</select></td>
+				<td><button onClick={() => {this.addActuator()}}><b>Add</b></button></td>
+			</tr>
+			</tbody>
+			</table>
         </div>
       )
    }
