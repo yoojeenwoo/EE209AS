@@ -31,7 +31,7 @@ contract System {
     event tempUpdate(address from, uint temp);
     event humidUpdate(address from, uint temp);
     
-    // Functions to set up network and devices0x9Ea39C22b612e2909f7FeB8782991A97b3A80784
+    // Functions to set up network and devices
     function System() public {                                  // Constructor
         owner = msg.sender;                                     // Caller of contract is owner
     }
@@ -77,16 +77,16 @@ contract System {
         uint currentTemp = temperature[temperature.length - 1];
         uint currentHumid = humidity[humidity.length - 1];
         if (currentTemp < MIN_TEMP) {
-            tempAlert(msg.sender, "Temperature too low!", currentTemp);
+            emit tempAlert(msg.sender, "Temperature too low!", currentTemp);
         }
         else if (currentTemp > MAX_TEMP) {
-            tempAlert(msg.sender, "Temperature too high!", currentTemp);
+            emit tempAlert(msg.sender, "Temperature too high!", currentTemp);
         }
         if (currentHumid < MIN_TEMP) {
-            humidAlert(msg.sender, "Humidity too low!", currentHumid);
+            emit humidAlert(msg.sender, "Humidity too low!", currentHumid);
         }
         else if (currentHumid > MAX_HUM) {
-            humidAlert(msg.sender, "Humidity too high!", currentHumid);
+            emit humidAlert(msg.sender, "Humidity too high!", currentHumid);
         }
     }
     
