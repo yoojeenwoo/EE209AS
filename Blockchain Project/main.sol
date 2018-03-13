@@ -25,7 +25,7 @@ contract System {
     mapping(address => Sensor) public sensors;                  // Map addresses to devices
     mapping(address => Actuator) public actuators;              // Map addresses to actuators
     
-    // Alert events emitted to light clients
+    // Alert events logged to blockchain
     event tempAlert(address from, string message, uint temp);
     event humidAlert(address from, string message, uint humid);
     event tempUpdate(address from, uint temp);
@@ -52,20 +52,24 @@ contract System {
     
     // Getter functions
     function getTemp() public view returns(uint temp) {
+		require(msg.sender == owner || actuators[msg.sender].deviceType == "Display");
         return temperature[temperature.length - 1];
     }
     
     function getHumid() public view returns(uint humid) {
+		require(msg.sender == owner || actuators[msg.sender].deviceType == "Display");
         return humidity[humidity.length - 1];
     }
     
     // Setter Functions
     function addTemp(uint temp) public {
+		require(sensors[msg.sender].deviceType == "Temperature");
         temperature.push(temp);
         tempUpdate(msg.sender, temp);
     }
     
     function addHumid(uint humid) public {
+		require(sensors[msg.sender].deviceType == "Humidity");
         humidity.push(humid);
         humidUpdate(msg.sender, humid);
     }
@@ -74,8 +78,8 @@ contract System {
     function safetyCheck() public {
         /**@dev Checks if temperature and humidity are within bounds */
         if (msg.sender != owner) { return; }                    // Safety check accessible only by owner
-        uint currentTemp = temperature[temperature.length - 1];
-        uint currentHumid = humidity[humidity.length - 1];
+        uint currentTemp = getTemp();
+        uint currentHumid = getHumid();
         if (currentTemp < MIN_TEMP) {
             emit tempAlert(msg.sender, "Temperature too low!", currentTemp);
         }
