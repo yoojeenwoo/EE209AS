@@ -1,16 +1,16 @@
 # EE209AS
 
 ## Goals
-* Implement identity management system for smart home sensors
+* Implement identity management and permissions system for smart home sensors
 * Enforce principle of least privilege for data access (sensors and actuators only access functions and data they need, users of the contract cannot access privileged information)
 * Untrusted devices cannot add themselves to the network
-* Robustness to protect system in case one of the sensors is compromised (Cloning attack)
-* Future work may include research for private key storage and computations in secure hardware enclaves
-* Limits DoS attacks on the network, since network transactions cost ether
+* Robustness to protect system in case one of the sensors is compromised (Cloning attack, faked sensor readings)
+* Limits DoS attacks on the network, since network transactions cost ether (are untrusted entities capable of obtaining our private ether?)
+* Transparent and tamper-proof smart contract code
 
 ## Attacker Model
-* Possible physical access to some of the sensors/actuators
-	* System not responsible for guaranteeing integrity of sensor/actuator function
+* Assumes no physical access to sensors/actuators
+	* System cannot protect sensor data if a sensor is physically compromised
 * Can compromise software on some of the sensors/actuators
 	* Damage is limited to compromised device; overall network is unaffected because of enforced privileges
 * The private keys of the smart contract owner have not been compromised
@@ -18,7 +18,16 @@
 ## System Description
 1. Contract maintains array of trusted IoT sensors and actuators
 2. Contract enforces permissions for each device (contract functions check address of caller)
-3. Devices added to blockchain as light nodes (Ethereum nodes hosted by third party) to reduce overhead
-4. Sensors log readings into the blockchain at custom time interval according to power consumption limitations
-5. Contract monitors readings makes relevant data available to actuators
-6. Actuators accept input from contract at custom time interval according to power consumption limitations
+3. Devices added to blockchain (how are devices added? how do we know an added device is trusted?)
+4. Contract enforces permissions for users attempting to access devices
+
+## Ideas
+* Cryptographic hash of firmware stored on blockchain to verify genuine devices [1]
+* Permissions stored on blockchain for user access control
+* Secure messaging between devices
+	* Transactions are signed and verified cryptographically to ensure sender is trusted
+
+## References
+1. N. Kshreti, "Can Blockchain Strengthen the Internet of Things?," _IT Professional_, Vol. 19, No. 4, August 2017
+2. S. Huh, S. Cho, and S. Kim, "Managing IoT Devices using Blockchain Platform", _2017 19th International Conference on Advanced Communication Technology (ICACT)_, February 2017
+3. A. Dorri, S. Kanhere, R. Jurdak, and P. Gauravaram, "Blockchain for IoT Security and Privacy: The Case Study of a Smart Home," _2017 IEEE International Conference on Pervasive Computing and Communications Workshops (PerCom Workshops)_, March 2017
