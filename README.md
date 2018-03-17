@@ -36,6 +36,7 @@ The network will be responsible for managing the following transactions:
 
 ## Ideas
 * Cryptographic hash of firmware stored on blockchain to verify genuine devices [1, 5]
+* Software Update System [5]
 * Permissions stored on blockchain for user access control
 * Secure messaging between devices [1]
 	* Transactions are signed and verified cryptographically to ensure sender is trusted
@@ -49,5 +50,8 @@ The network will be responsible for managing the following transactions:
 3. A. Dorri, S. Kanhere, R. Jurdak, and P. Gauravaram, "Blockchain for IoT Security and Privacy: The Case Study of a Smart Home," _2017 IEEE International Conference on Pervasive Computing and Communications Workshops (PerCom Workshops)_, March 2017
 4. A. Dorri, S. Kanhere, and R. Jurdak, "Towards an Optimized BlockChain for IoT," _Proceedings of the Second International Conference on Internet-of-Thing Design and Implementation_, April 2017
 5. K. Christidis and M. Devetsikiotis, "Blockchains and Smart Contracts for the Internet of Things," _IEEE Access_, Vol. 4, May 2016
-6. Y. Aung and T. Tantidham, "Review of Ethereum: Smart Home Case Study," _2017 2nd International Conference on Information Technology (INCIT), November 2017
+6. Y. Aung and T. Tantidham, "Review of Ethereum: Smart Home Case Study," _2017 2nd International Conference on Information Technology (INCIT)_, November 2017
+7. J. Benet. _IPFS - Content Addressed, Versioned, P2P File System (DRAFT3)_, accessed on Mar. 17, 2018. [Online]. Available: https://github.com/ipfs/papers/blob/master/ipfs-cap2pfs/ipfs-p2p-file-system.pdf
+8. A. Boudguiga, N. Bouzerna, L. Granboulan, A. Olivereau, F. Quesnel, A. Roger, and R. Sirdey, "Towards Better Availability and Accountability for IoT Updates by Means of a Blockchain," _2017 IEEE European Symposium on Security and Privacy Workshops (EuroS&PW)_, April 2017
+
 
