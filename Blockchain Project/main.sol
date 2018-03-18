@@ -5,6 +5,7 @@ contract System {
 	bytes1 constant READ_TEMP_PERMISSION = 0x02;	// Permissions to call getTemp()
 	bytes1 constant WRITE_HUMID_PERMISSION = 0x04;	// Permissions to call addHumid()
 	bytes1 constant READ_HUMID_PERMISSION = 0x08;	// Permissions to call getHumid()
+	bytes public firmware;							// Newest Manufacturer Firmware Binary
     address[] devices;                  			// Dynamic device array
     
     address public owner;               			// Address of contract owner
@@ -34,6 +35,23 @@ contract System {
         owner = msg.sender;                                     // Caller of contract is owner
     }
     
+	function pushUpdate(bytes new_firmware) public {
+		require(msg.sender == owner);
+		firmware = new_firmware;
+	}
+	
+	function checkForUpdate(bytes myFirmware) public view returns(bool updateRequired) {
+	    if (myFirmware.length != firmware.length) {
+	        return true;
+	    }
+	    for (uint i = 0; i < myFirmware.length && i < firmware.length; ++i) {
+	        if (firmware[i] != myFirmware[i]) {
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	
     function addSensor(address _device, string _name, bytes1 _permissions) public {
         require(msg.sender == owner);                           // Only owner can add sensors
         sensors[_device].name = _name;
