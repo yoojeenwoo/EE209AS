@@ -36,13 +36,13 @@ The network will be responsible for managing the following transactions:
 
 ## Ideas
 * Cryptographic hash of firmware stored on blockchain to verify genuine devices [1, 5]
-* Software Update System [5]
+* Software Update System [5, 8, 10, 11]
 * Permissions stored on blockchain for user access control
 * Secure messaging between devices [1]
 	* Transactions are signed and verified cryptographically to ensure sender is trusted
 	
-## Challenges
-* A single-miner system still has a single point of failure, the miner
+## Benefits of Blockchain-Based Software Updates
+* Alleviates excessive network traffic from large amounts of simultaneous update requests [10]
 
 ## References
 1. N. Kshreti, "Can Blockchain Strengthen the Internet of Things?," _IT Professional_, Vol. 19, No. 4, August 2017
@@ -53,5 +53,7 @@ The network will be responsible for managing the following transactions:
 6. Y. Aung and T. Tantidham, "Review of Ethereum: Smart Home Case Study," _2017 2nd International Conference on Information Technology (INCIT)_, November 2017
 7. J. Benet. _IPFS - Content Addressed, Versioned, P2P File System (DRAFT3)_, accessed on Mar. 17, 2018. [Online]. Available: https://github.com/ipfs/papers/blob/master/ipfs-cap2pfs/ipfs-p2p-file-system.pdf
 8. A. Boudguiga, N. Bouzerna, L. Granboulan, A. Olivereau, F. Quesnel, A. Roger, and R. Sirdey, "Towards Better Availability and Accountability for IoT Updates by Means of a Blockchain," _2017 IEEE European Symposium on Security and Privacy Workshops (EuroS&PW)_, April 2017
-
+9. K. Özyılmaz and A. Yurdakul, "Work-in-Progress: Integrating Low-Power IoT devices to a Blockchain-Based Infrastructure," _2017 International Conference on Embedded Software (EMSOFT)_, October 2017
+10. B. Lee and J. Lee, "Blockchain-based secure firmware update for embedded devices in an Internet of Things environment," _The Journal of Supercomputing_, Vol. 73, No. 3, March 2017, pp. 1152-1167
+11. B. Lee, S. Malik, S. Wi, and J. Lee,"_International Conference on Heterogeneous Networking for Quality, Reliability, Security and Robustness_, 2016, pp. 52-61
 
