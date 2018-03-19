@@ -314,6 +314,19 @@ console.log('-----------------------------------');
 console.log('Smart Contract Execution');
 console.log('-----------------------------------');
 
+
+web3.eth.defaultAccount = "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068";
+web3.eth.getBalance(web3.eth.defaultAccount)
+.then(console.log);
+
+web3.eth.getGasPrice()
+.then((response) => {
+		response = web3.utils.toHex(response);
+        console.log(response);
+    })
+//web3.eth.accounts.create();
+
+//********** MOST RECENT *****************************\
 web3.eth.defaultAccount = "0x667C93482CFFaEe41C466f7C1B96FE0525eC1068";
 
 
@@ -325,21 +338,21 @@ var fullName = functionName + '(' + types.join() + ')'
 var signature = CryptoJS.SHA3(fullName,{outputLength:256}).toString(CryptoJS.enc.Hex).slice(0, 8)  
 var dataHex = signature + web3.eth.abi.encodeParameters(types, args)  
 var data = '0x'+dataHex  
-var nonce = parseInt(web3.utils.toHex(web3.eth.getTransactionCount(account)))%20 
-var gasPrice = web3.utils.toHex(web3.eth.getGasPrice())
-console.log(gasPrice)
+var nonce = parseInt(web3.utils.toHex(web3.eth.getTransactionCount(account)))% 2147483647;
+var gasPrice = web3.utils.toHex(web3.eth.getGasPrice()) % 2147483647;
+//console.log(gasPrice)
 // web3.utils.toHex(web3.eth.gasLimit)
 // .then(console.log);
 
 var gasLimitHex = web3.utils.toHex(web3.eth.gasLimit)
-console.log(gasLimitHex)
+//console.log(gasLimitHex)
 
 var rawTx = { 
 			'nonce': nonce, 
-			'gas': "53128",
-			// 'gasPrice': gasPrice, 
-			'gasLimit': '100000000', 
-			'from': account, 
+			'gas': "21000",
+			'gasPrice': gasPrice, 
+			'gasLimit': '21000', 
+			'from': web3.eth.defaultAccount, 
 			'to': addr, 
 			'data': data}  
 var tx = new EthJS(rawTx)  
@@ -351,6 +364,8 @@ web3.eth.estimateGas({
 }) 
 .then(console.log);
 web3.eth.sendSignedTransaction(serializedTx, function(err, txHash){ console.log(err, txHash) })
+
+//*/
 
 //console.log(web3.eth.defaultAccount);
 
