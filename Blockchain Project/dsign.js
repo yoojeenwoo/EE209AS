@@ -35,6 +35,9 @@ const verifier = crypto.createVerify('sha256');
 verifier.update(message);
 verifier.end();
 
+console.log("Signature: ", signature);
+console.log("Message: ", message);
+
 //const publicKey = diffHell.getPublicKey('hex');
 const verified = verifier.verify(publicKey, signature);
 
