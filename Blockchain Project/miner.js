@@ -15,6 +15,9 @@ var crypto = require('crypto');
 // Add the cron node module. allows scheduling of events
 var cron = require('node-cron');
 
+// require scp node module. allows secure copy of firmware data
+var client = require('scp2');
+
 // Show web3 where it needs to look for the Ethereum node.
 //web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:30306"));
 web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:30305"));
@@ -211,6 +214,8 @@ var interval = 5;
 console.log('-----------------------------------');
 console.log('-----------------------------------');
 
+device_array = ['192.168.0.18']; 
+
 var numDevices = 1;
 var manufacturer_firmware;
 
@@ -228,20 +233,48 @@ var cronJob = cron.schedule('*/'+interval+' * * * * *', function(){
 		verifier.update(manufacturer_firmware);
 		verifier.end();
 
-		console.log(signature)
-		for (var i = 0; i < numDevices; ++i) {    
-			var filepath = path.join(__dirname, 'sensorRequests' + i.toString() + '.txt');
-			var buffer = fs.readFileSync(filepath);
-			console.log('Device ', i.toString(), 'firmware: ', buffer.toString());
 
-			if (verifier.verify(publicKey, signature)){
-				console.log("Manufactuere signature verified")
-				if (buffer != manufacturer_firmware) {
-					console.log('Update Required for Device ' + i.toString());
+		// If firmware signature checks out, save firmware to miner node
+		var verified = verifier.verify(publicKey, signature);
+		if (verified){
+			console.log("Manufactuere signature verified")
+			var writepath = path.join(__dirname, "FIRMWARE.hex")
+			fs.writeFile(writepath, manufacturer_firmware, function(err) {
+			    if(err) {
+			        return console.log(err);
+			    }
+			    console.log("Latest firmware saved");
+			    
+			    // Iterate through devices and check their firmware.
+			    // if out of date, update. If not, move on.
+			    for (var i = 0; i < numDevices; ++i) {    
+					var filepath = path.join(__dirname, 'sensorRequests' + i.toString() + '.txt');
+					var buffer = fs.readFileSync(filepath);
+					console.log('Device', i.toString(), 'firmware:', buffer.toString());
+
+					if (verified){
+						if (buffer != manufacturer_firmware) {
+							console.log('Update Required for Device ' + i.toString());
+							client.scp("/home/refai/Desktop/EE209AS/Blockchain\ Project/FIRMWARE.hex", {
+								host: device_array[i], 
+								username: 'pi',
+								password: '2018ee209as',
+								path: '/home/pi/Desktop/Version/FIRMWARE.hex' 
+							}, function(response) {
+								//console.log(response)
+								console.log("Device successfully updated");
+							})
+						}else{
+							console.log("Device firmware up to date!")
+						}
+					}else{
+						//console.log("Manufacturer Signature not verified. Package will be discarded.")
+					}
 				}
-			}else{
-				console.log("Manufacturer Signature not verified. Package will be discarded.")
-			}
+				console.log('\n');
+			}); 
+		}else{
+			console.log("Manufacturer Signature not verified. Package will be discarded.")
 		}
 	});
 })
