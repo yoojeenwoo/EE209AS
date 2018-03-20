@@ -7,14 +7,25 @@ manufacturers to push firmware updates to their devices through the use of smart
 download the newest version of their firmware binaries. The same smart contracts also manage device identity, and can be easily extended to enforce 
 fine-grained permissions for different types of devices and users.
 
-## Problem
-* Traditional smart home IoT systems are reliant on a centralized cloud, a single point of failure
-* Traditional smart home IoT systems requires trust in the cloud
-* Sensors and actuators can be compromised
-* DDoS attacks on sensors?
+## Introduction
+Over-the-air (OTA) updates for IoT devices allow manufacturers to quickly and conveniently update devices that are already deployed in homes,
+industry, power grids, and more. As the number of devices a given manufacturer is responsible for maintaining scales, it becomes more difficult to 
+manage the version control and update process required for every device. To solve this, manufacturers must construct complicated 
+in-house update management systems or push updates through a rusted third party. Firmware updates that are held on a centralized server are vulnerable 
+to denial-of-service attacks, and this can delay critical patches from being applied to vulnerable devices. Firmware update systems also need to 
+provide a guarantee of the validity of a firmware update, blocking malicious updates and keeping legitimate ones. In general, such systems should 
+satisfy the CIA triad of requirements: confidentiality, integrity, and availability [8].
 
-## Solution
-* Implement blockchain-based identity management and permissions system for smart home sensors
+Blockchain technology has been popularized over the last several years as a potential solution to security problems. The concept was pioneered by
+Bitcoin as a digital currency (cryptocurrency) system. Since then, the concept of cryptocurrency has evolved to include smart contracts that allow
+users to implement arbitrary logic through the blockchain.
+
+This project aims to implement blockchain-based identity management and firmware update system for smart home sensors. The resilience of the
+blockchain to denial-of-service attacks ensures that updates pushed to the blockchain will be continually available to all devices. We will also 
+explore the implementation of innocuous checking nodes [8] to guarantee the validity of a firmware binary pushed from the manufacturer. By virtue 
+of consensus, a given device can be ensured that, although some nodes in the blockchain may be untrusted, firmware updates can still be verified 
+as safe by the consensus of the network as a whole.
+
 
 ## Benefits of Solution
 * Enforce principle of least privilege for data access (sensors and actuators only access functions and data they need, 
@@ -23,7 +34,8 @@ users of the contract cannot access privileged information)
 * Robustness to protect system in case one of the sensors is compromised (Cloning attack, faked sensor readings)
 * Limits DoS attacks on the network, since network transactions cost ether (are untrusted entities capable of obtaining our private ether?)
 * Transparent and tamper-proof smart contract code. Smart Contracts provide device autonomy
-* Removes third party for establishing trust, reducing operation costs
+* Removes need to build complicated in-house update management systems or trust third-parties, reducing operation costs
+* Built-in log for successful and unsuccessful updates
 
 ## Attacker Model
 * Assumes no physical access to sensors/actuators
