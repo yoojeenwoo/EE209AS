@@ -9,15 +9,22 @@ var path = require('path');
 // Add the web3 node module
 var Web3 = require('web3');
 
+// Require crypto node module
+var crypto = require('crypto');
+
 // Add the cron node module. allows scheduling of events
 var cron = require('node-cron');
 
 // Show web3 where it needs to look for the Ethereum node.
-web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:30306"));
+//web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:30306"));
+web3 = new Web3(new Web3.providers.HttpProvider("http://127.0.0.1:30305"));
+
 
 // The contract address
-var addr = "0x756039a002310f018b0ee0b1dcdc03b86a7d90b0";
+var addr = "0xc21b34efb431c0a8494be88c8b76fd3018a61241";
+// Define the manufacturer's public key
 
+const publicKey = fs.readFileSync('/home/refai/Desktop/keys/public.pem', 'utf-8')
 // Show the Hash in the console.
 console.log('Contract Location: ' + addr);
 
@@ -194,6 +201,7 @@ var abi = [
 // Define the contract ABI and Address
 var contract = new web3.eth.Contract(abi, addr);
 
+
 // var adr = contract.options.address;
 // console.log(adr);
 
@@ -210,17 +218,30 @@ var manufacturer_firmware;
 var cronJob = cron.schedule('*/'+interval+' * * * * *', function(){
 	contract.methods.firmware().call()
 	.then(function(response){
-		console.log("Current Firmware Hash is ", response);
-		manufacturer_firmware = response;
-		});
-	for (var i = 0; i < numDevices; ++i) {    
-		var filepath = path.join(__dirname, 'sensorRequests' + i.toString() + '.txt');
-		var buffer = fs.readFileSync(filepath);
-		console.log('Device ', i.toString(), 'firmware: ', buffer.toString());
-		if (buffer != manufacturer_firmware) {
-			console.log('Update Required for Device ' + i.toString());
-		}
-	}
-})
+		//console.log("Current Firmware is ", response);
+		// Define a verifier object
+		const verifier = crypto.createVerify('sha256');
+		manufacturer_signature = response.substring(2,514).trim();
+		manufacturer_firmware = response.substring(514, response.length).trim()
+		
+		var signature = Buffer.from(manufacturer_signature, 'hex');
+		verifier.update(manufacturer_firmware);
+		verifier.end();
 
-web3.eth.personal.unlockAccount("0xb0aac8fc40f56fda315aba59604f1bdb6ce24d9d", "Marwa241", 1000);
+		console.log(signature)
+		for (var i = 0; i < numDevices; ++i) {    
+			var filepath = path.join(__dirname, 'sensorRequests' + i.toString() + '.txt');
+			var buffer = fs.readFileSync(filepath);
+			console.log('Device ', i.toString(), 'firmware: ', buffer.toString());
+
+			if (verifier.verify(publicKey, signature)){
+				console.log("Manufactuere signature verified")
+				if (buffer != manufacturer_firmware) {
+					console.log('Update Required for Device ' + i.toString());
+				}
+			}else{
+				console.log("Manufacturer Signature not verified. Package will be discarded.")
+			}
+		}
+	});
+})
