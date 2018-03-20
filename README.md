@@ -1,5 +1,9 @@
 # EE209AS
 
+## Abstract
+As the Internet of Things (IoT) industry continues to grow, security systems need to develop to ensure that manufacturers can easily and reliably issue security updates
+to their devices.
+
 ## Problem
 * Traditional smart home IoT systems are reliant on a centralized cloud, a single point of failure
 * Traditional smart home IoT systems requires trust in the cloud
@@ -14,7 +18,8 @@
 * Untrusted devices cannot add themselves to the network
 * Robustness to protect system in case one of the sensors is compromised (Cloning attack, faked sensor readings)
 * Limits DoS attacks on the network, since network transactions cost ether (are untrusted entities capable of obtaining our private ether?)
-* Transparent and tamper-proof smart contract code
+* Transparent and tamper-proof smart contract code. Smart Contracts provide device autonomy
+* Removes third party for establishing trust, reducing operation costs
 
 ## Attacker Model
 * Assumes no physical access to sensors/actuators
@@ -58,4 +63,6 @@ The network will be responsible for managing the following transactions:
 9. K. Özyılmaz and A. Yurdakul, "Work-in-Progress: Integrating Low-Power IoT devices to a Blockchain-Based Infrastructure," _2017 International Conference on Embedded Software (EMSOFT)_, October 2017
 10. B. Lee and J. Lee, "Blockchain-based secure firmware update for embedded devices in an Internet of Things environment," _The Journal of Supercomputing_, Vol. 73, No. 3, March 2017, pp. 1152-1167
 11. B. Lee, S. Malik, S. Wi, and J. Lee, "Firmware Verification of Embedded Devices Based on a Blockchain," _International Conference on Heterogeneous Networking for Quality, Reliability, Security and Robustness_, 2016, pp. 52-61
+12. N. Kshetri. (2018). _Using Blockchain to Secure the "Internet of Things"_. [Online]. Available: https://www.scientificamerican.com/article/using-blockchain-to-secure-the-internet-of-things/
+
 
