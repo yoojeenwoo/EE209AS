@@ -1,4 +1,6 @@
-# EE209AS
+# Blockchain for Secure IoT Firmware Updates
+
+Ahmed Refai and Eugene Wu
 
 ## Abstract
 As the Internet of Things (IoT) industry continues to grow, security systems need to develop to ensure that manufacturers can easily and 
@@ -18,13 +20,18 @@ satisfy the CIA triad of requirements: confidentiality, integrity, and availabil
 
 Blockchain technology has been popularized over the last several years as a potential solution to security problems. The concept was pioneered by
 Bitcoin as a digital currency (cryptocurrency) system. Since then, the concept of cryptocurrency has evolved to include smart contracts that allow
-users to implement arbitrary logic through the blockchain.
+users to implement arbitrary logic through the blockchain. Different blockchains can vary in their rules and purposes; there are public blockchains 
+adapted for the open exchange of value or information. There are also private blockchains ideal for use in enterprise. Private blockchains require 
+new nodes to acquire permission to participate in the network. This allows manufacturers to whitelist trusted participants in the network and
+stay closed to the public.
 
 This project aims to implement blockchain-based identity management and firmware update system for smart home sensors. The resilience of the
 blockchain to denial-of-service attacks ensures that updates pushed to the blockchain will be continually available to all devices. We will also 
 explore the implementation of innocuous checking nodes [8] to guarantee the validity of a firmware binary pushed from the manufacturer. By virtue 
 of consensus, a given device can be ensured that, although some nodes in the blockchain may be untrusted, firmware updates can still be verified 
-as safe by the consensus of the network as a whole.
+as safe by the consensus of the network as a whole. Furthermore, smart contracts are transparent, tamper-proof, and flexible, allowing for more 
+device autonomy with regard to enforcing permissions. Finally, the blockchain provides a public ledger for manufacturers to easily audit successful
+and unsuccessful updates to their devices. 
 
 
 ## Benefits of Solution
@@ -36,6 +43,8 @@ users of the contract cannot access privileged information)
 * Transparent and tamper-proof smart contract code. Smart Contracts provide device autonomy
 * Removes need to build complicated in-house update management systems or trust third-parties, reducing operation costs
 * Built-in log for successful and unsuccessful updates
+* Supports multiple manufacturers, which is essential as each smart home ecosystem will include devices from a variety of manufacturers
+* Trustless
 
 ## Attacker Model
 * Assumes no physical access to sensors/actuators
@@ -45,10 +54,25 @@ users of the contract cannot access privileged information)
 * The private keys of the smart contract owner have not been compromised
 
 ## System Overview
+The system will consist of a private, permissioned blockchain that is managed by a manufacturer. The manufacturer maintains one or more nodes in the 
+blockchain, and publishes a smart contract into the blockchain to control identity management, firmware updates, and any other logic that must be
+implemented for the system. Only the manufacturer has permission to add or remove miner nodes to and from the smart contract's record. The smart 
+contract is flexible and can be programmed to enforce permissions on its users. Smart homes are grouped into clusters of IoT devices that are connected 
+to one or two "miner" nodes. These nodes act as gateways to the blockchain, interacting with the manufacturer's smart contract.
+
+### Private Blockchain
+A private blockchain is on an entirely separate chain from the frequently used public Ethereum blockchain (the mainnet). To start a new blockchain, 
+one must create a genesis block. The genesis block sets the parameters that are also true for consecutive blocks. The data in every following block 
+will depend on the preceding block in the blockchain, except for the genesis block. After creating the genesis block, nodes in the network can "mine" 
+ether and receive and send transactions.
+
+### Smart Contracts
+
 1. Contract maintains array of trusted IoT sensors and actuators
 2. Contract enforces permissions for each device (contract functions check address of caller)
 3. Devices added to blockchain (how are devices added? how do we know an added device is trusted?)
 4. Contract enforces permissions for users attempting to access devices
+5. Contract holds most recent manufacturer firmware release; devices periodically check for updates
 
 The network will be responsible for managing the following transactions:
 1. Access data
@@ -61,6 +85,7 @@ The network will be responsible for managing the following transactions:
 * Permissions stored on blockchain for user access control [3, 4, 5]
 * Secure messaging between devices [1]
 	* Transactions are signed and verified cryptographically to ensure sender is trusted
+* Peer-to-peer file sharing [7, 8, 10, 11]
 	
 ## Benefits of Blockchain-Based Software Updates
 * Persistence/Immutability of software upgrades towards a given object [9]
