@@ -215,6 +215,9 @@ var abi = [
 	}
 ];
 
+
+// manufacturer.js
+
 // Define the contract ABI and Address
 var contract = new web3.eth.Contract(abi, addr);
 
@@ -245,18 +248,7 @@ const signature_hex = signature.toString('hex')
 
 //console.log(signature_hex);
 var packagepp = "0x" + signature_hex + messagepp;
-// for (var i = 0; i< package.length; i++){
-// 	//console.log(package[i])
-// 	if ((package[i] != '\n') && (package[i] != ":")) {
-// 		//console.log(package[i]);
-// 		//package[i] = '';
-// 		//i-=1;
-// 		packagepp += package[i];
-// 	}
-// }
-//console.log(packagepp.substring(515,packagepp.length));
-//console.log(signature_hex);
-//console.log(message);
+
 
 // Get coinbase
 web3.eth.getCoinbase()

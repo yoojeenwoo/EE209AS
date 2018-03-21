@@ -216,7 +216,8 @@ console.log('-----------------------------------');
 
 device_array = ['192.168.0.18']; 
 
-var numDevices = 1;
+//miner.js
+var numDevices = device_array.length;
 var manufacturer_firmware;
 
 
