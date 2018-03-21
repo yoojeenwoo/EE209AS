@@ -3,8 +3,8 @@ var crypto = require('crypto');
 
 const fs = require('fs')
 
-const privateKey = fs.readFileSync('/home/refai/Desktop/private.pem', 'utf-8')
-const publicKey = fs.readFileSync('/home/refai/Desktop/public.pem', 'utf-8')
+const privateKey = fs.readFileSync('/home/refai/Desktop/keys/private.pem', 'utf-8')
+const publicKey = fs.readFileSync('/home/refai/Desktop/keys/public.pem', 'utf-8')
 //const message = fs.readFileSync('message.txt', 'utf-8')
 
 //----------------------------------------------------------------//
@@ -39,7 +39,9 @@ console.log("Signature: ", signature);
 console.log("Message: ", message);
 
 //const publicKey = diffHell.getPublicKey('hex');
-const verified = verifier.verify(publicKey, signature);
+var hunch = Buffer.from(signature_hex, 'hex');
+console.log(hunch)
+const verified = verifier.verify(publicKey, hunch);
 
 console.log(JSON.stringify({
 	message: message,

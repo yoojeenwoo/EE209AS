@@ -2,7 +2,7 @@ import urllib.request
 import time
 
 #Change this address to your settings
-device_links = ["http://192.168.0.20:8080"]
+device_links = ["http://192.168.0.18:8080"]
 numDevices = 1
 
 while True:
