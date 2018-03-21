@@ -33,7 +33,7 @@ users of the contract cannot access privileged information)
 * The private keys of the smart contract owner have not been compromised
 
 ## System Overview
-The system will consist of a private, permissioned blockchain that is managed by a manufacturer. The manufacturer maintains one or more nodes in the blockchain, and publishes a smart contract into the blockchain to control identity management, firmware updates, and any other logic that must be implemented for the system. Only the manufacturer has permission to add or remove miner nodes to and from the smart contract's record. The smart contract is flexible and can be programmed to enforce permissions on its users. Smart homes are grouped into clusters of IoT devices that are connected to one or two "miner" nodes. These nodes act as gateways to the blockchain, interacting with the manufacturer's smart contract.
+The system will consist of a private, permissioned blockchain that is managed by a manufacturer. The manufacturer maintains one or more nodes in the blockchain, and publishes a smart contract into the blockchain to control identity management, firmware updates, and any other logic that must be implemented for the system. Only the manufacturer has permission to add or remove miner nodes to and from the smart contract's record. The smart contract is flexible and can be programmed to enforce permissions on its users. Smart homes are grouped into clusters of IoT devices that are connected to one or more "miner" nodes. These nodes act as gateways to the blockchain, interacting with the manufacturer's smart contract.
 
 ### Software and Hardware Tools
 We used a Raspberry Pi Zero W running the Raspbian OS as an IoT device existing in a smart home. We implemented miner nodes on one Windows and one Linux machine. We used Geth, the Go implementation of Ethereum, as our main tool to construct and interact with our private blockchain. Geth utilizes the Web3 JavaScript API to assist in interacting with the blockchain. We also use Python and Node.js to write the scripts to control interaction between different components of the system. 
@@ -64,8 +64,6 @@ This contract stores a dynamic byte array containing the most updated firmware, 
 ### Smart Home Network
 Because of the resource limitations and power constraints on most IoT devices, they typically cannot be instantiated as nodes in the blockchain network. The devices in each home instead interact with the blockchain through one or two gateways, which are full nodes on the blockchain. The setup for this network is well-accepted as a solution to integrating IoT systems with blockchain []. The gateway nodes interact with the blockchain on behalf of the devices, and relay any relevant results back to the devices. 
 
-Though we have not implemented it in this setup, this setup for firmware updates can be extended to implement permissions systems. The manufacturer can publish policies on the smart contract. Sensors that want to write data to local storage on the miner make a request to the miner, and the miner subsequently checks the sensors permissions through the smart contract [6].
-
 ## Firmware Update Process
 The firmware update process consists of four steps:
 1. Manufacturer signs firmware binary file with private key, pushes to blockchain through smart contract
@@ -80,6 +78,8 @@ The three properties required for a secure system are confidentiality, integrity
 
 ## Future Work
 The most important item for future work is confidentiality of device firmware. Currently, we are forced to push the unencrypted firmware onto the blockchain. Pushing encrypted versions of the firmware would require encrypting the firmware with the public keys of every device in the network. As the system scales, this solution becomes untenable. A separate solution would be to push only a firmware update version identifier onto the blockchain. When it becomes apparent to a node that a firmware update is required, the node receives a hash or metadata file from the smart contract and attempts to obtain a copy of the update through peer-to-peer exchange with other nodes [8]. The manufacturer node also takes part in the peer-to-peer exchange for the first requests for the update, but after the update has propagated to enough nodes this will no longer be necessary [5]. A good candidate for this file exchange is the InterPlanetary File System protocol [7].
+
+Though we have not implemented it in this project, this setup for firmware updates can be extended to implement permissions systems. The manufacturer can publish policies on the smart contract. Sensors that want to write data to local storage on the miner make a request to the miner, and the miner subsequently checks the sensors permissions through the smart contract [6]. Permissions can be extended past data transfer to any functionality to which the sensors/actuators might request access.
 
 In the case that the private blockchain is expanded to incorporate multiple manufacturers, we will explore the implementation of innocuous checking nodes to guarantee the validity of a firmware binary pushed from a manufacturer [8]. By virtue of consensus, a given device can be ensured that, although some nodes in the blockchain may be untrusted, firmware updates can still be verified as safe by the consensus of the network as a whole.
 
