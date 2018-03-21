@@ -1,0 +1,109 @@
+Instructions to run
+
+NODEJS and Scripts
+1. Install nodejs 8.9.4 and npm
+2. Pull or clone the github directory.
+3. In main project directory run cat package.json
+	a. Consult the "dependencies field"
+	b. These are the dependencies you will need to run the node scripts.
+	c. npm install -S <packagename@x.y.z> where x,y,z make up the version of the package.
+ 
+
+GETH - This will show you how to connect the manufacturer and at least one miner to the blockchain
+The manufacturer is the only node that has been provided since it is the owner of the contract.
+1. Install geth (go-ethereum) client.
+2. Create a new directory, you can name it anything you want.
+3. Place the genesis.json file inside. 
+4. connect first node (manufacturer)
+	a. run: "geth --datadir ./final_9001 --networkid 9001 --port 30304 --nodiscover console 2>> final.log"
+5. Connect a miner node. In a separate terminal window, or on a different machine:
+	a. run: "geth --datadir ./<dirname> init genesis.json"
+	b. make sure you use the same genesis file.
+	c. run: "geth --datadir ./<dirname> --networkid 9001 --port 30306 --nodiscover console 2>> <logname2>.log"
+	d. once logged in, run: "admin.nodeInfo.enode" and copy the output.
+		NOTE: If you're on 2 different machines, find your internal ip address (ifconfig) and replace [::] with it. 
+6. On first terminal (manufacturer) run: "admin.addPeer(<paste copied enode url here>)"
+	a. this should connect both peers to each other. run "admin.peers" to confirm.
+		This returns a json object with all present peers, you should see enode url under the field "id".
+	b. add the enode url to the static-nodes.json file under the final_9001 directory, and any other data directories you've created.
+7. Mine some ether
+	a. on miner terminal, create a new account. "personal.newAccount()", you will be prompted to enter a password.
+	b. run "miner.start(1)"
+	c. wait a few seconds then run "miner.stop()"
+	d. "eth.getBalance(eth.coinbase)" to confirm that your balance has gone up (should be nonzero)
+	e. "eth.blockNumber" notice how there are over a thousand blocks already mined into the BC.
+	f. notice how there is a copy of the BC from final_9001 in the new directory you created under /dirname/geth/chaindata.
+8. Repeat steps 5-7 for each additional miner you want to add to the network.
+9. Load the contract from the blockchain.
+	a. from geth terminal of manufacturer run "loadScript("loadSystem.js")"
+		i. should return "null"
+	b. call function "systemOnBC.owner()"
+		i. should return the manufacturer's address (160-bit/40-hex address)
+10. exit manufacturer window.
+11. in new terminal run: "geth --rpc --networkid 9001 --rpcaddr "127.0.0.1" --rpcport 30305 --rpccorsdomain "*" --rpcapi="db,eth,net,web3,personal,web3,miner" --nodiscover --port 30304 --datadir final_9001 2>> final.log"
+	a. This connects your manufacturer node and makes it available for rpc calls through the web3js rpcapi on your localhost on port 30305.
+	b. in another terminal, "tail -f final.log" to read from the log.
+12. See step 3d below first before continuing.
+13. If you would like to run miner nodes, run a command similar to step 11.
+	a. you must change to the correct directory.
+	b. you must use a different rpcport. you must use the same --port as the miner nodes you want to active.
+	c. Additionally, "run geth attach <dirname>/geth.ipc" to attach a console to the ipc instance.
+		i. you will able to run miner.start(1) and stop from here.
+
+Raspberry Pi's
+Setup your device clusters. I will assume you're using raspberry pi's. Make sure ssh is enabled
+1. To communicate the firmware file (version) from the pi to the computer, we used http requests as a quick way to get information across. You are welcome to use any method you feel comfortable with/require. I will describe our process below.
+2. On pi, download and install webpy
+3. scp over server.py from the project directory.
+4. chmod +x server.py to make executable.
+5. ifconfig to find your internal ip.
+6. server.py broadcasts the contents of "FIRMWARE.hex" over http (port 8080)
+	a. If you haven't already, create a file with hex digits inside called FIRMWARE.hex in the same directory as sever.py
+7. On your machine, configure minerInput.py with the correct ip address.
+8. Move on to next section, we'll run the script here later.
+
+Back to NodeJS and Scripts
+1. Generate a private/public key pair with openssl.
+	a. openssl req -new -x509 -days 365 -nodes -sha256 -out public.pem -keyout private.pem
+	b. remember where you generated them
+2. cd to the "Blockchain Project" directory.
+3. Make some changes specific to your experimental setup:
+  In manufacturer.js
+	a. if you used a different port or url for step 11 above, modify the web3 provider specification on line 20.
+	b. On line 43, modify the privateKey path string to yours.
+	c. on line 225, modify the path string for your hex file.
+	d. For ease while I was developing, I used the extended miner modules to mine directly from the manufacturer. If you would lke the miner nodes to do the mining, comment lines 257 and 262.
+		i. The end result is the same when you run, this is faster and involves less things you have to do.
+		ii. If you choose to use miner nodes to mine transactions, see step 13 above.
+  In miner.js
+  	a. see 3a. Line 23
+  	b. see 3b. For public key. Line 30
+  	c. Update the device_array with the ip address(es) of your connected pi's
+  	d. change the scp path on line 259 to reflect your project directory.
+  	e. change your pi ssh credentials, and modify your path to wherever you placed FIRMWARE.hex on your pis.
+  In minerInput.py
+  	a. configure with correct ip addresses.
+
+  NOTE: feel free to comment out any print statements if you deem them unnecessary.
+
+Putting it all together!
+Make sure all devices are running and all nodes are synced before proceeding.
+1. run "unlock.js" to unlock the manufacturer account, this allows you to push updates.
+2. run "./server.py" on all RBPi's 
+3. run "miner.js" and "minerInput.py"
+	a. This checks the blockchain for the most current firmware version.
+	b. Downloads it, checks the validity of the digital signature (if it came from the manufacturer)
+	c. checks firmware versions of devices specified.
+	d. overwrites modified or old firmware with new version.
+	e. aborts if signature couldn't be verified.
+4. edit your new firmware version file (originally firmware.hex) to whatever you want (must be hex digits, newlines, colons, no other characters)
+5. run "manufacturer.js"
+	a. reads the latest firmware version into the program.
+	b. digitally signs the firmware and appends it to the payload as a header.
+	c. The node then issues a signed transaction to the contract via the method pushUpdate(packagepp)
+	d. If you disabled the miner in this script and opted to have node miners, you must now switch windows to your attached miner node. and start mining there "miner.start(1)".
+	e. Observe how the firmware hex file changes on the contract, thereby changing on the RBPi's.
+	f. Run this file as many times as necessary.
+	g. stop the miner "miner.stop()".
+
+
