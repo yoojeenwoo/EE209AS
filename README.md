@@ -14,23 +14,26 @@ This project aims to implement blockchain-based identity management and firmware
 
 
 ## Benefits of Solution
-* Enforce principle of least privilege for data access (sensors and actuators only access functions and data they need, 
-users of the contract cannot access privileged information)
+Our solution provides many benefits to manufacturers. First, it allows them to more effectively limit who gets to access their firmware. Smart contracts allow control over which miners, or which devices get to access pushed data. This also makes it possible to support multiple manufacturers on the same private blockchain and maintain access control (as in only their devices would be able to access the content).
+
+The firmware distribution process is also simplified. The manufacturer simply pushes an update on to the blockchain through the smart contract and it becomes immediately available to all gateway nodes on the network. Copies of the firmware will propagate throughout the network with no involvement from the manufacturer (as in the manufacturer is not requried to distribute their software and incur the costs of serving multiple clients). This also protects the manufacturers from potential denial of service attacks and their potential to compromise availability. They are also no longer required to trust third pary services that provide distributed file-sharing platforms, or implement their own complicated services.
+
+Additionally, the system offers two-fold verification of the legitimacy of a given update. 1) All pushed updates are digitally signed by the manufacturer, and copies of the public key are available on approved nodes. The nodes are then able to verify the validity of the update before accepting it. 2) In order for an update transaction to be accepted into the blockchain, it must have originated from the manufacturer's node on the blockchain. It is then mined by a given miner, and the transaction is placed on the blockchain to be quickly verfied by several other nodes.
+
+The damage a compromised miner node is limited only to the sensors and actuators it is responsible for. Unlike p2p file sharing systems, the version of the firmware is not downloaded onto the node and redistributed to other nodes. Instead, it is on the blockchain. This prevents a compromised node from tampering with replacing the firmware file. A compromised miner may refuse to mine, or choose to mine invalid transactions from another compromised node, thereby causing a fork. This is ineffective unless an adversary control the majority of miners in the network.
+
+If an end-device is compromised, it can not cause any damage to the overall network. It is again, limited to damaging itself and devices it interacts with. Since end devices are not connected to the blockchain (they are not nodes). Furthermore, a compromised end-device will be visible to the miner node. The miner node is capable of warning users, for example when a device fails to update several times, or if a device is no longer communicating with the miner node.
+
 * Untrusted devices cannot add themselves to the network
-* Robustness to protect system in case one of the sensors is compromised (Cloning attack, faked sensor readings)
-* Limits DoS attacks on the network
-* Transparent and tamper-proof smart contract code. Smart Contracts provide device autonomy
-* Removes need to build complicated in-house update management systems or trust third-parties, reducing operation costs
-* Built-in log for successful and unsuccessful updates
-* Supports multiple manufacturers, which is essential as each smart home ecosystem will include devices from a variety of manufacturers
-* Trustless
 
 ## Attacker Model
-* Assumes no physical access to sensors/actuators
-	* System cannot protect sensor data if a sensor is physically compromised
-* Can compromise software on some of the sensors/actuators
-	* Damage is limited to compromised device; overall network is unaffected because of enforced privileges
-* The private keys of the smart contract owner have not been compromised
+For this project we assume a resourceful adversary that has access to many devices and miner nodes. The adversary is able to see data received through the blockchain on miner nodes, and is able to influence operations on end devices.
+#### Network
+We assume an adversary is able to observe network traffic and determine the contents of packets as they leave and enter a given network. This means that the adversary is able to determine the unencrypted contents of a given update file, and can isolate the manufacturer's digital signature that accompanies each update. This information is not useful to an attacker as the private key cannot be inferred from such information. We also assume that the adversary is able to isolate a given device from its miner device. This only damages the given cluster and is not conisdered stealthy since the miner node will notice.
+#### Blockchain
+We assume the adversary does not control the majority of nodes on the blockchain network (miner nodes). This is a reasonable assumption as the adversary must be able to compromise each miner device individually, and there is no way for the adversary to propagate an attack through the actual blockchain network. This assumption allows us to guarantee that all transactions sent to the blockchain are legitimate and not forged. Currently, only the manufacturer is able to influence data uploaded to the blockchain.
+#### Manufacturer
+We assume that the manufacturer is not compromised. Our current implementation relies on a trustworthy manufacturer. It is therefor assumed that all updates pushed by the manufacturer are valid, and should be installed by the appropriate devices. This unfortunately gives rise to attacks on the manufacturer node that could lead to severe damages to the overall network and connected devices. The system does not protect against buggy or malicious firmware pushed by the manufacturer. However, given that the manufacturer node is appropriately secured, the system does protect against its impersonation. An adversary cannot push an update pretending to be the manufacturer as they would need the manufacturer's private keys (one to sign the software, and one to sign the transaction).
 
 ## System Overview
 The system will consist of a private, permissioned blockchain that is managed by a manufacturer. The manufacturer maintains one or more nodes in the blockchain, and publishes a smart contract into the blockchain to control identity management, firmware updates, and any other logic that must be implemented for the system. Only the manufacturer has permission to add or remove miner nodes to and from the smart contract's record. The smart contract is flexible and can be programmed to enforce permissions on its users. Smart homes are grouped into clusters of IoT devices that are connected to one or more "miner" nodes. These nodes act as gateways to the blockchain, interacting with the manufacturer's smart contract.
