@@ -32,7 +32,7 @@ The damage that can be caused by a compromised miner node is limited to only the
 
 If an end-device is compromised, it can not cause any damage to the overall network. It is again, limited to damaging itself and devices it interacts with. Since end devices are not connected to the blockchain (they are not nodes). Furthermore, a compromised end-device will be visible to the miner node. The miner node is capable of warning users, for example when a device fails to update several times, or if a device is no longer communicating with the miner node.
 
-* Untrusted devices cannot add themselves to the network
+Untrusted devices cannot add themselves to the network
 
 ## Attacker Model
 For this project we assume a resourceful adversary that has access to many devices and miner nodes. The adversary is able to see data received through the blockchain on miner nodes, and is able to influence operations on end devices.
@@ -99,6 +99,7 @@ Though we have not implemented it in this project, this setup for firmware updat
 In the case that the private blockchain is expanded to incorporate multiple manufacturers, we will explore the implementation of innocuous checking nodes to guarantee the validity of a firmware binary pushed from a manufacturer [8]. By virtue of consensus, a given device can be ensured that, although some nodes in the blockchain may be untrusted, firmware updates can still be verified as safe by the consensus of the network as a whole.
 
 ## Conclusion
+To conclude, we were able to provide an alternative means for remote, secure, and reliable firmware updates. We were able to implement a functioning private blockchain with a single manufacturer node and 2 miner nodes each responsible for a subset of raspberry pi embedded devices. Our method allows manufacturers to direct expensive server costs elsewhere while simultaneously keeping their firmware off the "public internet" and out of third party software repositories while not compromising the speed at which updates become available after release. Overall, there is still room to expand this platform, such as expanding to multiple manufacturers, moving to a proof of authority model, or the implementation of a subscription-based payment model leveraging the currency oriented environment of Ethereum. Further work must still be done to set this platform apart from other software update mechanisms that are largely in use today. 
 
 ## References
 1. N. Kshreti, "Can Blockchain Strengthen the Internet of Things?," _IT Professional_, Vol. 19, No. 4, August 2017
